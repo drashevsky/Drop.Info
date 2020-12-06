@@ -15,6 +15,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject; 
 import org.json.simple.parser.*; 
 import java.nio.file.*;
+import java.util.Random;
 
 public class Profile {
 	 private String profileId; // Unique identifier for individual profile
@@ -23,6 +24,9 @@ public class Profile {
 	 private String imageId;
 	 
 	 private static int nextIDnumber = 0; // gives Id for next instance of profile
+	 
+	 private static final int ID_LENGTH = 8;
+	 private static Random rand = new Random();
 	 
 	 // Takes data in a string format and parses it into object
 	 public Profile (String json) throws FileNotFoundException, IOException, ParseException {
@@ -43,12 +47,35 @@ public class Profile {
 		 this.title = title;
 		 this.content = content;
 		 this.imageId = imageId;
-		 profileId = ""+ nextIDnumber;
+		 profileId = generateRandomId();
 		 nextIDnumber++;
 		 
 	 }
 	 
-	 // This is for loading file from JSON (wrapper)
+	 private static String generateRandomId() {
+		 String acc = "";
+		 
+		 
+		 for (int i = 0; i < ID_LENGTH; i ++ ) {
+			 int num = rand.nextInt(36);
+			 char ch;
+			 if (num <= 25) {
+				 ch = (char) ('a' + num);
+				 
+				 
+			 } else {
+				 ch = (char) ('0' + (num-26));
+				 
+			 }
+			 acc+=ch;
+			
+			 
+		 }
+		 return acc;
+		 
+		
+	 }
+	// This is for loading file from JSON (wrapper)
 	 public static Profile loadProfileFromJSON (String fileName) throws Exception {
 		 return loadProfileFromJSON(fileName, "Profiles/");
 	 }
@@ -168,6 +195,7 @@ public class Profile {
 	}
 	
 	public static void main(String[] args) throws Exception {
+		rand = new Random(100);
 		Profile p = new Profile("{\n"
 				+ "  \"title\": \"my First Card\",\n"
 				+ "  \"content\": \"data that goes on a card\",\n"
@@ -182,7 +210,7 @@ public class Profile {
 		System.out.println(p2);
 		p2.saveProfileToJSON();
 		
-		Profile p3 = Profile.loadProfileFromJSON("Profile0.json");
+		Profile p3 = Profile.loadProfileFromJSON("Profilehkkah4uu.json");
 		p3.setTitle("new title");
 		p3.saveProfileToJSON();
 		
@@ -195,6 +223,10 @@ public class Profile {
 		
 		p3.saveImage(bytes, "png");
 		p3.saveProfileToJSON();
+		
+		for (int i = 0; i < 10; i++) {
+			System.out.println(generateRandomId());
+		}
 
 	}
 
