@@ -75,6 +75,10 @@ public class Profile {
 		 
 		
 	 }
+	 
+	 public static Profile loadProfile(String profileId) {
+		return loadProfileFromJSON("Profile" + profileId.toLowerCase() + ".json");
+	 }
 	// This is for loading file from JSON (wrapper)
 	 public static Profile loadProfileFromJSON (String fileName) throws Exception {
 		 return loadProfileFromJSON(fileName, "profiles/");
