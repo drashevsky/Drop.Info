@@ -1,0 +1,138 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0 !important;
+}
+
+a {
+    color: rgb(17, 119, 202) !important;
+}
+
+#header {
+    width: 100%;
+    height: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80%;
+}
+
+#form > form {
+    width: 50%;
+}
+
+#footer {
+    width: 100%;
+    height: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#footer > a {
+    margin-left: 10px;
+}
+
+@media (min-width: 500px) {
+    #header #footer {
+        min-height: 85px;
+    }
+
+    #form {
+        min-height: 680px;
+    }
+}
+
+#title-input {
+    width: calc(100% - 1.5rem);
+}
+
+#content-input {
+    width: calc(100% - 1.5rem);
+    height: 20vh;
+}
+
+#content-input-preview {
+    width: calc(100% - 1.5rem);
+    height: 20vh;
+    border: 1px solid var(--color-bg-secondary);
+    border-radius: var(--border-radius);
+    margin-bottom: 1rem;
+    padding: 0.4rem 0.8rem;
+    display: none;
+    word-wrap: break-word;
+    overflow-y: auto;
+}
+
+#content-input-header {
+    display: inline;
+}
+
+#content-input-preview-button {
+    display: inline;
+    vertical-align: middle;
+    padding-top: 5px;
+    float: right;
+}
+
+#content-input-preview-button:hover {
+    color: #29292b;
+    cursor: pointer;
+}
+
+#content-input-preview-button-hidden {
+    display: none;
+}
+
+#file-input {
+    overflow: hidden;
+    max-width: 75%;
+    display: inline-block;
+}
+
+#file-input-delete-button {
+    width: 24px;
+    height: 24px;
+    display: none;
+    vertical-align: middle;
+    padding-bottom: 5px;
+    color: #29292b;
+}
+
+#file-input-delete-button:hover {
+    cursor: pointer;
+    color: red;
+}
+
+#submit-input {
+    height: 0;
+    line-height: 0;
+}
+
+#constrain-text-setting-label {
+    margin-left: 5px;
+}
+
+#button-div {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    text-align: center;
+}
+
+#error {
+    color: red;
+    display: block;
+}
+
+.spacer {
+    height: 15px; 
+    width: 100%; 
+    display: block;
+}

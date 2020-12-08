@@ -77,7 +77,7 @@ public class Profile {
 	 }
 	// This is for loading file from JSON (wrapper)
 	 public static Profile loadProfileFromJSON (String fileName) throws Exception {
-		 return loadProfileFromJSON(fileName, "Profiles/");
+		 return loadProfileFromJSON(fileName, "profiles/");
 	 }
 	 
 	 // loading file
@@ -97,7 +97,7 @@ public class Profile {
      
      // This is for saving file to JSON (wrapper)
   	 public Profile saveProfileToJSON () throws FileNotFoundException {
-  		return saveProfileToJSON("Profile" + profileId + ".json", "Profiles/");
+  		return saveProfileToJSON("Profile" + profileId + ".json", "profiles/");
   		
   	 }
   	 
@@ -214,7 +214,7 @@ public class Profile {
 		p3.setTitle("new title");
 		p3.saveProfileToJSON();
 		
-		Path source = Paths.get("testimage.png");
+		Path source = Paths.get("images/image0.png");
 		BufferedImage bi = ImageIO.read(source.toFile());
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();

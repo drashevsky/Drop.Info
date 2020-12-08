@@ -1,0 +1,85 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+
+a {
+    color: rgb(17, 119, 202) !important;
+}
+
+#card-image {
+    width: 100%;
+    height: 30%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#card-image-content {
+    height: 95%;
+}
+
+#card-header {
+    width: 100%;
+    height: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#card-content {
+    width: 100%;
+    min-height: 48%;
+}
+
+#card-content-text {
+    height: 100%;
+    font-size: 1.5em;
+    overflow: hidden;
+}
+
+#card-content-text > h1, h2, h3 {
+    font-size: 1.2em;
+}
+
+#card-footer {
+    width: 100%;
+    height: 12%;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#card-footer-message {
+    margin: 0 25px 5px 0;
+}
+
+#card-footer-message-link {
+    color: black !important;
+    font-style: bold;
+}
+
+#card-footer-message-link:hover {
+    color: #29292b !important;
+    text-decoration: none;
+}
+
+.unconstrain {
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+.constrain {
+    margin-left: 25%;
+    margin-right: 25%;
+}
+
+.expand {
+    height: 78%;
+}
+
+.hidden {
+    display: none !important;
+}
