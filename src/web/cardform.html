@@ -14,9 +14,9 @@
             <h1>Drop.Info</h1>
         </div>
         <div id="form">
-            <form method="POST" action="" enctype="multipart/form-data">
+            <form>
                 <h2>Card Title</h2>
-                <input id="title-input" name="title" type="text" required></input>
+                <input id="title-input" type="text"  maxlength="100" required></input>
 
                 <h2 id="content-input-header">Card Contents</h2>
                 <div id="content-input-preview-button" title="Markdown Preview">
@@ -28,11 +28,11 @@
                     </svg>
                 </div>
                 <span class="spacer"></span>
-                <textarea id="content-input" name="content" maxlength="1500" required></textarea>
+                <textarea id="content-input" maxlength="1500" required></textarea>
                 <div id="content-input-preview"></div>
 
                 <h2>Upload Image</h2>
-                <input id="file-input" name="image" type="file" accept="image/*"></input>
+                <input id="file-input" type="file" accept="image/png,image/jpeg,image/gif"></input>
                 <div id="file-input-delete-button">
                     <svg viewBox="0 0 24 24">
                         <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
@@ -41,20 +41,20 @@
         
                 <h2>Settings</h2>
                 <div class="pretty p-switch p-fill">
-                    <input id="constain-text-setting-input" name="constrain" type="checkbox"/>
+                    <input id="constain-text-setting-input" type="checkbox"/>
                     <div class="state p-primary">
                         <label id="constrain-text-setting-label">Constrain Text Width</label>
                     </div>
                 </div>
                 <div id="button-div">
-                    <button id="submit-input">Create</button>
+                    <button id="submit-input" type="button">Create</button>
                     <p id="error"></p>
                 </div>
             </form>
         </div>
         <div id="footer">
             <p>(C) Drop.Info</p>
-            <a href="/help">What's This?</a>
+            <a href="/what">What's This?</a>
         </div>
     </body>
 </html>

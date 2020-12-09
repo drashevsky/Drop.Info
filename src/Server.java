@@ -11,14 +11,14 @@ public class Server {
 	
     public static void main(String[] args) throws FileNotFoundException, IOException {
 
-        HttpServer server = HttpServer.create(new InetSocketAddress(8000), 100);
+        HttpServer server = HttpServer.create(new InetSocketAddress(80), 100);
         
         server.createContext("/", (HttpExchange t) -> {
         	try {
         		String[] path = t.getRequestURI().getPath().split("/");
             	String lastPart = (path.length > 0) ? path[path.length - 1] : "";
             	
-        		if (lastPart.length() == cardIdLength && lastPart.matches("[A-Za-z0-9]+")) {
+        		if (Profile.exists(lastPart) && !t.getRequestURI().toString().contains("//")) {
             		String html = Files.readString(Paths.get("views/card.html"));
             		send(t, "text/html; charset=utf-8", html);
             	
@@ -36,6 +36,20 @@ public class Server {
         	}
         });
         
+        server.createContext("/create", (HttpExchange t) -> {
+        	try {
+        		
+        		if (t.getRequestURI().getPath().equals("/create") && !t.getRequestURI().toString().contains("//")) {
+        			sendData(t, 400, "Error: bad request");
+        		} else {
+        			sendError(t, 404, "Error: page not found.");
+        		}
+        		
+        	} catch (Exception e) {
+        		System.out.println(e);
+        		sendData(t, 500, "Error: server error.");
+        	}
+        });
         
         server.createContext("/static/", (HttpExchange t) -> {
         	try {
@@ -48,24 +62,16 @@ public class Server {
         		} else if (contentType.equals("js")) {
         			send(t, "text/javascript", Files.readString(Paths.get("." + path)));
         		} else {
-        			sendError(t, 404, "Error: resource not found.");
+        			sendError(t, 404, "Error: page not found.");
         		}
-        		
-        	} catch (InvalidPathException e) {
-        		System.out.println(e);
-        		sendError(t, 404, "Error: resource not found.");
         	
-        	} catch (NoSuchFileException e) {
-        		System.out.println(e);
-        		sendError(t, 404, "Error: resource not found.");
-        		
-        	} catch (FileNotFoundException e) {
-        		System.out.println(e);
-        		sendError(t, 404, "Error: resource not found.");
-        		
         	} catch (AccessDeniedException e) {
         		System.out.println(e);
         		sendError(t, 403, "Error: access denied.");
+        	
+        	} catch (InvalidPathException | IOException e) {
+        		System.out.println(e);
+        		sendError(t, 404, "Error: page not found.");
         		
         	} catch (Exception e) {
         		System.out.println(e);
@@ -78,7 +84,7 @@ public class Server {
         		String[] path = t.getRequestURI().getPath().split("/");
             	String lastPart = (path.length > 0) ? path[path.length - 1] : "";
             	
-        		if (lastPart.length() == cardIdLength && lastPart.matches("[A-Za-z0-9]+")) {
+        		if (Profile.exists(lastPart) && !t.getRequestURI().toString().contains("//")) {
             		String html = Files.readString(Paths.get("views/share.html"));
             		send(t, "text/html; charset=utf-8", html);
             		
@@ -93,9 +99,52 @@ public class Server {
         });
         
         server.createContext("/img/", (HttpExchange t) -> {
-        	send(t, "text/html; charset=utf-8", "oops");
+        	try {
+        		String[] path = t.getRequestURI().getPath().split("/");
+            	String lastPart = (path.length > 0) ? path[path.length - 1] : "";
+            	byte[] imageData = Profile.loadImage(lastPart, "images/");
+            	
+            	String[] splitName = lastPart.split("\\.");
+        		String contentType = (splitName.length > 0) ? splitName[splitName.length - 1].toLowerCase() : "";
+        		
+        		if (contentType.equals("png")) {
+        			sendImage(t, "image/png", imageData);
+        		} else if (contentType.equals("jpg") || contentType.equals("jpeg")) {
+        			sendImage(t, "image/jpeg", imageData);
+        		} else if (contentType.equals("gif")) {
+        			sendImage(t, "image/gif", imageData);
+        		} else {
+        			sendError(t, 404, "Error: page not found.");
+        		}
+        		
+        	} catch (AccessDeniedException e) {
+        		System.out.println(e);
+        		sendError(t, 403, "Error: access denied.");
+        	
+        	} catch (InvalidPathException | IOException e) {
+        		System.out.println(e);
+        		sendError(t, 404, "Error: page not found.");
+        		
+        	} catch (Exception e) {
+        		System.out.println(e);
+        		sendError(t, 500, "Error: server error.");
+        	}
         });
        
+        server.createContext("/what", (HttpExchange t) -> {
+        	try {
+        		
+        		if (t.getRequestURI().getPath().equals("/what") && !t.getRequestURI().toString().contains("//")) {
+        			send(t, "text/html; charset=utf-8", Files.readString(Paths.get("views/whatsthis.html")));
+        		} else {
+        			sendError(t, 404, "Error: page not found.");
+        		}
+        		
+        	} catch (Exception e) {
+        		System.out.println(e);
+        		sendError(t, 500, "Error: server error.");
+        	}
+        });
         
         server.createContext("/data/", (HttpExchange t) -> {
         	send(t, "application/json", "");
@@ -128,6 +177,27 @@ public class Server {
         t.sendResponseHeaders(errorCode, response.length);
         try (OutputStream os = t.getResponseBody()) {
             os.write(response);
+        }
+    }
+    
+    private static void sendData(HttpExchange t, int code, String message) 
+    		throws IOException, UnsupportedEncodingException, FileNotFoundException {
+        t.getResponseHeaders().set("Content-Type", "text/plain; charset=utf-8");
+        byte[] response = message.getBytes("UTF-8");
+        t.sendResponseHeaders(code, response.length);
+        try (OutputStream os = t.getResponseBody()) {
+            os.write(response);
+        }
+    }
+    
+    private static void sendImage(HttpExchange t, String contentType, byte[] imageData) 
+    		throws IOException, UnsupportedEncodingException {
+        
+    	t.getResponseHeaders().set("Content-Type", contentType);
+        t.sendResponseHeaders(200, imageData.length);
+        
+        try (OutputStream os = t.getResponseBody()) {
+            os.write(imageData);
         }
     }
 

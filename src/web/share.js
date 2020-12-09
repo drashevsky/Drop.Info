@@ -4,7 +4,7 @@ let downloadQrButton, copyLinkButton, qrCodeElement, message;
 
 window.onload = () => {
     let urlParts = window.location.href.split('/');
-    let url = 'https://drop.info/' + urlParts[urlParts.length - 1];
+    let url = window.location.protocol + '//' + window.location.hostname + "/" + urlParts[urlParts.length - 1];
 
     downloadQrButton = document.getElementById("download-qr-button");
     copyLinkButton = document.getElementById("copy-link-button");

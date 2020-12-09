@@ -1,0 +1,55 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0 !important;
+}
+
+a {
+    color: rgb(17, 119, 202) !important;
+}
+
+#header {
+    width: 100%;
+    height: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#content {
+    width: 100%;
+}
+
+#card-content-text {
+    height: 100%;
+    font-size: 1.5em;
+    margin-left: 25%;
+    margin-right: 25%;
+    word-wrap: break-word;
+}
+
+#card-content-text > h1, h2, h3 {
+    font-size: 1.2em;
+}
+
+#footer {
+    width: 100%;
+    height: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#footer-message {
+    margin: 0 25px 5px 0;
+}
+
+#footer-message-link {
+    color: black !important;
+    font-style: bold;
+}
+
+#footer-message-link:hover {
+    color: #29292b !important;
+    text-decoration: none;
+}

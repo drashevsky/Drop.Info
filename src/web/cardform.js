@@ -1,17 +1,19 @@
 const maxlengths = [900, 1500, 1600, 2800];
-var constrainInput, fileInput, contentInput, deleteButton, previewButton,
-    previewButtonVisible, previewButtonHidden, preview;
+var constrainInput, fileInput, titleInput, contentInput, deleteButton, previewButton,
+    previewButtonVisible, previewButtonHidden, preview, submitButton;
 
 
 window.onload = () => {
     constrainInput = document.getElementById('constain-text-setting-input');
     fileInput = document.getElementById('file-input');
+    titleInput = document.getElementById('title-input');
     contentInput = document.getElementById('content-input');
     deleteButton = document.getElementById('file-input-delete-button');
     previewButton = document.getElementById('content-input-preview-button');
     previewButtonVisible = document.getElementById('content-input-preview-button-visible');
     previewButtonHidden = document.getElementById('content-input-preview-button-hidden');
     preview = document.getElementById('content-input-preview');
+    submitButton = document.getElementById('submit-input');
     
     constrainInput.addEventListener('change', changeMaxLength);
     fileInput.addEventListener('change', (event) => {
@@ -39,6 +41,8 @@ window.onload = () => {
             preview.style.display = 'none';
         }
     });
+
+    submitButton.addEventListener('click', sendFormData);
 }
 
 
@@ -59,4 +63,44 @@ function changeMaxLength(event) {
     if (contentInput.value.length > contentInput.maxLength) {
         contentInput.value = contentInput.value.substring(0, contentInput.maxLength);
     }
+}
+
+async function sendFormData() {
+    if (!titleInput.value || !contentInput.value) {
+        return;
+    }
+
+    let data = new Object();
+    data["isTextConstrained"] = constrainInput.checked;
+    data["title"] = titleInput.value;
+    data["content"] = contentInput.value;
+    data["image"] = (fileInput.files.length > 0) ? await toDataURL(fileInput.files[0]) : null;
+
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", '/create', true);
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    
+    xhr.onreadystatechange = () => {
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+            window.location.href = xhr.responseText;
+        } else {
+            postError(xhr.responseText);
+        }
+    }
+
+    xhr.send(JSON.stringify(data));
+}
+
+function toDataURL(file) {
+    return new Promise((resolve, reject) => {
+        let reader = new FileReader();
+        reader.addEventListener("load", () => {
+            resolve(reader.result);
+        }, false);
+        reader.readAsDataURL(file);
+    });
+}
+
+function postError(message) {
+    document.getElementById('error').innerHTML = message;
 }
