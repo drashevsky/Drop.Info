@@ -6,36 +6,129 @@ import java.nio.file.*;
 import com.sun.net.httpserver.*;
 
 public class Server {
-    private static final String QUERY_TEMPLATE = "{\"items\":[%s]}";
-
+	
+	private static final int cardIdLength = 8;
+	
     public static void main(String[] args) throws FileNotFoundException, IOException {
-        /*
-        // Step 0: Initialize data for the algorithm
-        Random random = new Random(1 + 0x43);
-        // Create an HttpServer instance on port 8000 accepting up to 100 concurrent connections
+
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 100);
-        // Return the index.html file when the browser asks for the web app
+        
         server.createContext("/", (HttpExchange t) -> {
-            String html = Files.readString(Paths.get("index.html"));
-            send(t, "text/html; charset=utf-8", html);
+        	try {
+        		String[] path = t.getRequestURI().getPath().split("/");
+            	String lastPart = (path.length > 0) ? path[path.length - 1] : "";
+            	
+        		if (lastPart.length() == cardIdLength && lastPart.matches("[A-Za-z0-9]+")) {
+            		String html = Files.readString(Paths.get("views/card.html"));
+            		send(t, "text/html; charset=utf-8", html);
+            	
+        		} else if (lastPart.length() == 0 && !t.getRequestURI().toString().contains("//")) {
+            		String html = Files.readString(Paths.get("views/cardform.html"));
+            		send(t, "text/html; charset=utf-8", html);
+            	
+        		} else {
+            		sendError(t, 404, "Error: page not found.");
+            	}
+        		
+        	} catch (Exception e) {
+        		System.out.println(e);
+        		sendError(t, 500, "Error: server error.");
+        	}
         });
-        // Return a list of suggestions for the given query string, s
-        server.createContext("/query", (HttpExchange t) -> {
-            String s = parse("s", t.getRequestURI().getQuery().split("&"));
-            if (s.equals("")) {
-                send(t, "application/json", String.format(QUERY_TEMPLATE, ""));
-                return;
-            }
-            // Step 1: Return 10 randomly-generated strings
-            send(t, "application/json", String.format(QUERY_TEMPLATE, json(result)));
+        
+        
+        server.createContext("/static/", (HttpExchange t) -> {
+        	try {
+        		String path = t.getRequestURI().getPath();
+        		String[] splitPath = path.split("\\.");
+        		String contentType = (splitPath.length > 0) ? splitPath[splitPath.length - 1].toLowerCase() : "";
+        		
+        		if (contentType.equals("css")) {
+        			send(t, "text/css", Files.readString(Paths.get("." + path)));
+        		} else if (contentType.equals("js")) {
+        			send(t, "text/javascript", Files.readString(Paths.get("." + path)));
+        		} else {
+        			sendError(t, 404, "Error: resource not found.");
+        		}
+        		
+        	} catch (InvalidPathException e) {
+        		System.out.println(e);
+        		sendError(t, 404, "Error: resource not found.");
+        	
+        	} catch (NoSuchFileException e) {
+        		System.out.println(e);
+        		sendError(t, 404, "Error: resource not found.");
+        		
+        	} catch (FileNotFoundException e) {
+        		System.out.println(e);
+        		sendError(t, 404, "Error: resource not found.");
+        		
+        	} catch (AccessDeniedException e) {
+        		System.out.println(e);
+        		sendError(t, 403, "Error: access denied.");
+        		
+        	} catch (Exception e) {
+        		System.out.println(e);
+        		sendError(t, 500, "Error: server error.");
+        	}
         });
-        */
-        server.createContext("/random", (HttpExchange t) -> {
-            // Step 2: Return a random non-terminal from the dataset
-            send(t, "application/json", "{\"s\":\"" + result + "\"}");
+        
+        server.createContext("/share/", (HttpExchange t) -> {
+        	try {
+        		String[] path = t.getRequestURI().getPath().split("/");
+            	String lastPart = (path.length > 0) ? path[path.length - 1] : "";
+            	
+        		if (lastPart.length() == cardIdLength && lastPart.matches("[A-Za-z0-9]+")) {
+            		String html = Files.readString(Paths.get("views/share.html"));
+            		send(t, "text/html; charset=utf-8", html);
+            		
+        		} else {
+            		sendError(t, 404, "Error: page not found.");
+            	}
+        		
+        	} catch (Exception e) {
+        		System.out.println(e);
+        		sendError(t, 500, "Error: server error.");
+        	}
         });
+        
+        server.createContext("/img/", (HttpExchange t) -> {
+        	send(t, "text/html; charset=utf-8", "oops");
+        });
+       
+        
+        server.createContext("/data/", (HttpExchange t) -> {
+        	send(t, "application/json", "");
+        });
+        
         server.setExecutor(null);
         server.start();
+    }
+
+    private static void send(HttpExchange t, String contentType, String data) 
+    		throws IOException, UnsupportedEncodingException {
+        
+    	t.getResponseHeaders().set("Content-Type", contentType);
+        byte[] response = data.getBytes("UTF-8");
+        t.sendResponseHeaders(200, response.length);
+        
+        try (OutputStream os = t.getResponseBody()) {
+            os.write(response);
+        }
+    }
+    
+    private static void sendError(HttpExchange t, int errorCode, String message) 
+    		throws IOException, UnsupportedEncodingException, FileNotFoundException {
+    	
+    	String html = Files.readString(Paths.get("views/error.html"));
+    	String result = String.format(html, errorCode, message);
+    	
+        t.getResponseHeaders().set("Content-Type", "text/html; charset=utf-8");
+        byte[] response = result.getBytes("UTF-8");
+        t.sendResponseHeaders(errorCode, response.length);
+        try (OutputStream os = t.getResponseBody()) {
+            os.write(response);
+        }
     }
 
     private static String parse(String key, String... params) {
@@ -47,17 +140,7 @@ public class Server {
         }
         return "";
     }
-
-    private static void send(HttpExchange t, String contentType, String data)
-            throws IOException, UnsupportedEncodingException {
-        t.getResponseHeaders().set("Content-Type", contentType);
-        byte[] response = data.getBytes("UTF-8");
-        t.sendResponseHeaders(200, response.length);
-        try (OutputStream os = t.getResponseBody()) {
-            os.write(response);
-        }
-    }
-
+    
     private static String json(Iterable<String> matches) {
         StringBuilder results = new StringBuilder();
         for (String s : matches) {
@@ -68,14 +151,4 @@ public class Server {
         }
         return results.toString();
     }
-
-/*
-    private static <E> E randomChoice(Collection<E> data, Random random) {
-        Iterator<E> iter = data.iterator();
-        for (int index = random.nextInt(data.size()); index > 0; index -= 1) {
-            iter.next();
-        }
-        return iter.next();
-    }
-    */
 }

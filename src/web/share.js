@@ -2,7 +2,10 @@ const qrCodeLength = 400;
 
 let downloadQrButton, copyLinkButton, qrCodeElement, message;
 
-function setup(url) {
+window.onload = () => {
+    let urlParts = window.location.href.split('/');
+    let url = 'https://drop.info/' + urlParts[urlParts.length - 1];
+
     downloadQrButton = document.getElementById("download-qr-button");
     copyLinkButton = document.getElementById("copy-link-button");
     qrCodeElement = document.getElementById('qr-code');
@@ -35,5 +38,4 @@ function setup(url) {
             message.innerHTML = "Error copying link.";
         });
     });
-
 }
