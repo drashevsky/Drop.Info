@@ -1,11 +1,16 @@
-What did you learn during this project?
-Kavi: During this project, I had to re-learn some concepts from previous courses such as CSE 142 and INFO 201. I had to learn how to read, write, and save files as well as work with the terminal, which I was not the most familiar with. Also, I had to work with json libraries and learned how to work with other people in a group, since I have not taken part in very many group computer science projects. In addition, even though I didn't code the server class and use html, I had to obtain a brief understanding of them in order to test and run the project.
-
-What did you enjoy during this project?
-Kavi: It was fun to design a new idea and to collaborate with the others.
-
-What did you find challenging or frustrating during this project?
-Kavi: Some challenging parts were running into errors during testing and additionally, since there was only 1 or 2 weeks to complete the project, there was a lot of stress to meet deadlines and thus, it was soemtimes hard to enjoy working on the project because of the need to complete it by the deadline. 
-
-What did you find particularly helpful for your learning during this project?
-Kavi: For me, the website geeksforgeeks was pretty helpful to better my understanding for reading and writing files. Furthermore, I found it helpeful that my group member Daniel completed a majority of the design and html development as well as delegating the roles to each member so that we all knew our priorities. Also, collaboration in general helped all 3 of us to clarify questions and discuss implementation options. 
+	During this project, we learned a lot more through the internet and research than we'd experienced before. Our skills
+from CSE 142 became useful, as well as Kavi's experience in INFO 201 and Daniel's experience with html/css. We learned how
+to interact with the terminal, and work on an actual project in a team-based environment through GitHub. Reading, writing,
+and saving json files became an important step in the progression of our project, and collaboration became a key instrument
+for our success. We also had to use some general teaching skills in order to let the others know what our classes and methods
+did, as well as sharing our new information and new ideas we decided to bring into the project. Some enjoyable moments of the
+project was researching, especially finding the one source that held a gold mine of information we'd be searching for, and
+most of all, watching the finished product unfold and work as we intended was such a spectacular moment. It was challenging
+to try to debug our project, since stress levels were exceptionally high and that made enjoying the workflow much more
+difficult. The time limit was another contribution to overall stress, especially given that Joel was on airplanes for most
+of the first week, and finding a way to start was extremely difficult for us. During this project, we frequently referred
+back to notes from other classes, like INFO 201 and CSE 142. Kavi also found a use from geeksforgeeks, which outlined
+a lot of ways to read and write json files, and Joel learned a lot about json's strengths and inner workings from json.org,
+and StackOverflow. Daniel also found merit in research, though he already had a plan of attack well before the rest of us.
+It was very helpful to have someone calling the shots in the beginning, which Daniel had under control. With every group
+member given their own delegated role, collaborating and still working on separate parts of the projects became a breeze.
