@@ -40,12 +40,45 @@ window.onload = () => {
     });
 
     copyLinkButton.addEventListener('click', (event) => {
-        navigator.clipboard.writeText(url).then(function() {
-            message.style.color = "rgb(17, 119, 202)";
-            message.innerHTML = "Link successfully copied!";
-        }, function(err) {
-            message.style.color = "red";
-            message.innerHTML = "Error copying link.";
-        });
+        try {
+            navigator.clipboard.writeText(url).then(function() {
+                reportCopySuccess(true);
+            }, function(err) {
+                reportCopySuccess(false);
+            });
+        } catch (e) {
+            reportCopySuccess(oldCopy(url));
+        }
     });
+}
+
+function oldCopy(text) {
+    let textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.top = "0";
+    textArea.style.left = "0";
+    textArea.style.position = "fixed";
+    textArea.style.display = "hidden";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+  
+    try {
+        let res = document.execCommand('copy');
+        document.body.removeChild(textArea);
+        return res;
+    } catch (e) {
+        document.body.removeChild(textArea);
+        return false;
+    }   
+}
+
+function reportCopySuccess(success) {
+    if (success) {
+        message.style.color = "rgb(17, 119, 202)";
+        message.innerHTML = "Link successfully copied!";
+    } else {
+        message.style.color = "red";
+        message.innerHTML = "Error copying link.";
+    }
 }
