@@ -1,12 +1,13 @@
 @echo off
+setlocal EnableDelayedExpansion
 
 REM Requires jre and jdk to be installed, java and javac added to system path.
 
 REM Get dependencies
-for /r %%i in (deps\*) do set CLASSPATH=%%i;%CLASSPATH%
+for /r %%i in (deps\*) do set CLASSPATH=%%i;!CLASSPATH!
 
 REM Build server backend
-javac src\*.java
+javac -classpath "!CLASSPATH!" src\*.java
 move src\*.class build
 
 REM Create directories

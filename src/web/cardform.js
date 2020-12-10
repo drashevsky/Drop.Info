@@ -74,16 +74,16 @@ async function sendFormData() {
     data["isTextConstrained"] = constrainInput.checked;
     data["title"] = titleInput.value;
     data["content"] = contentInput.value;
-    data["image"] = (fileInput.files.length > 0) ? await toDataURL(fileInput.files[0]) : null;
+    data["image"] = (fileInput.files.length > 0) ? await toDataURL(fileInput.files[0]) : "";
 
     let xhr = new XMLHttpRequest();
     xhr.open("POST", '/create', true);
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     
-    xhr.onreadystatechange = () => {
-        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-            window.location.href = xhr.responseText;
-        } else {
+    xhr.onreadystatechange = function () {
+        if (this.readyState === 4 && this.status === 200) {
+            window.location.href = "/" + xhr.responseText;
+        } else if (this.readyState === 4) {
             postError(xhr.responseText);
         }
     }

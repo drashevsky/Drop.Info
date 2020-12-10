@@ -2,16 +2,26 @@ import java.util.*;
 import java.io.*;
 import java.net.*;
 import java.nio.file.*;
+import java.nio.charset.*;
+import java.lang.*;
 
 import com.sun.net.httpserver.*;
+import org.apache.commons.io.*;
+import org.apache.commons.lang3.*;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.*;
 
 public class Server {
 	
-	private static final int cardIdLength = 8;
+	private static final int[] CONTENTLENGTHS = {900, 1500, 1600, 2800};
+	private static final int PORT = 80;
+	private static final int NUMCONNECTIONS = 100;
 	
     public static void main(String[] args) throws FileNotFoundException, IOException {
 
-        HttpServer server = HttpServer.create(new InetSocketAddress(80), 100);
+        HttpServer server = HttpServer.create(new InetSocketAddress(PORT), NUMCONNECTIONS);
         
         server.createContext("/", (HttpExchange t) -> {
         	try {
@@ -40,7 +50,54 @@ public class Server {
         	try {
         		
         		if (t.getRequestURI().getPath().equals("/create") && !t.getRequestURI().toString().contains("//")) {
-        			sendData(t, 400, "Error: bad request");
+        			
+        			String json = receiveBody(t.getRequestBody(), StandardCharsets.UTF_8);
+        			JSONObject jo = (JSONObject) new JSONParser().parse(new StringReader(json));
+        			
+        			String title = (String) jo.get("title");
+        			String content = (String) jo.get("content");
+        			String imageData = (String) jo.get("image");
+        			boolean isTextConstrained = (boolean) jo.get("isTextConstrained");
+        			
+        			String data = "", fileType = "";
+        			byte[] image = new byte[0];
+        			
+        			if (imageData.length() > 0) {
+        				data = imageData.substring(imageData.indexOf(",") + 1);
+        				fileType = imageData.substring(imageData.indexOf("/") + 1, imageData.indexOf(";"));
+        				image = Base64.getDecoder().decode(data);
+        				
+        				if (!(fileType.equals("jpeg") || fileType.equals("png") || fileType.equals("gif"))) {
+            				sendData(t, 400, "Error: unsupported image filetype.");
+            				return;
+        				}
+        			}
+        			
+        			if (title.length() > 100 || title.length() <= 0) {
+        				sendData(t, 400, "Error: no title or title too long.");
+        			} else if (content.length() <= 0) {
+        				sendData(t, 400, "Error: no content.");
+        			} else if (isTextConstrained && data.length() > 0 && content.length() > CONTENTLENGTHS[0]) {
+        				sendData(t, 400, "Error: content too long.");
+        			} else if (isTextConstrained && !(data.length() > 0) && content.length() > CONTENTLENGTHS[1]) {
+        				sendData(t, 400, "Error: content too long.");
+        			} else if (!isTextConstrained && data.length() > 0 && content.length() > CONTENTLENGTHS[2]) {
+        				sendData(t, 400, "Error: content too long.");
+        			} else if (!isTextConstrained && !(data.length() > 0) && content.length() > CONTENTLENGTHS[3]) {
+        				sendData(t, 400, "Error: content too long.");
+        			} else {
+        				title = StringEscapeUtils.escapeHtml4(title);
+        				content = StringEscapeUtils.escapeHtml4(content);
+        				
+        				Profile p = new Profile(title, content, null, (isTextConstrained) ? "true" : "false");
+        				if (image.length > 0) {
+        					p.saveImage(image, fileType);
+        				}
+        				p.saveProfileToJSON();
+        				
+        				sendData(t, 200, p.getProfileId());
+        			}
+        			
         		} else {
         			sendError(t, 404, "Error: page not found.");
         		}
@@ -214,24 +271,9 @@ public class Server {
         }
     }
 
-    private static String parse(String key, String... params) {
-        for (String param : params) {
-            String[] pair = param.split("=");
-            if (pair.length == 2 && pair[0].equals(key)) {
-                return pair[1];
-            }
-        }
-        return "";
-    }
-    
-    private static String json(Iterable<String> matches) {
-        StringBuilder results = new StringBuilder();
-        for (String s : matches) {
-            if (results.length() > 0) {
-                results.append(',');
-            }
-            results.append('"').append(s).append('"');
-        }
-        return results.toString();
+    private static String receiveBody(InputStream body, Charset charset) throws IOException {
+    	StringWriter writer = new StringWriter();
+    	IOUtils.copy(body, writer, charset);
+    	return writer.toString();
     }
 }

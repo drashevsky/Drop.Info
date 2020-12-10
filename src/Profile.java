@@ -5,9 +5,6 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
 import java.util.Iterator;
 import java.util.Map;
 
@@ -82,6 +79,10 @@ public class Profile {
 
 	public void setContent(String content) {
 		this.content = content;
+	}
+	
+	public String getProfileId() {
+		return profileId;
 	}
 	
 	

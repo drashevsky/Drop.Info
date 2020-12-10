@@ -32,7 +32,7 @@ function render(json) {
         image.src = '/img/' + json.imageId;
     } else {
         contentWrapper.className = 'expand';
-        image.className = 'hidden';
+        imageWrapper.className = 'hidden';
     }   
 
     share.href = window.location.protocol + '//' + window.location.hostname + "/share/" + json.profileId;
