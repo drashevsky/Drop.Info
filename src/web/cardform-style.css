@@ -56,6 +56,7 @@ a {
 #content-input {
     width: calc(100% - 1.5rem);
     height: 20vh;
+    margin-top: 0;
 }
 
 #content-input-preview {

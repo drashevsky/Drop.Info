@@ -36,7 +36,7 @@ a {
 #card-content-text {
     height: 100%;
     font-size: 1.5em;
-    overflow: hidden;
+    overflow-y: auto;
 }
 
 #card-content-text > h1, h2, h3 {
