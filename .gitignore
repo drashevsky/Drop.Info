@@ -29,3 +29,5 @@ build/runserver.bat
 build/runserver.sh
 build/static/
 build/views/
+build/profiles/
+build/images/image*
