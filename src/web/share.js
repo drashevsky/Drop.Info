@@ -1,6 +1,6 @@
 const qrCodeLength = 400;
 
-let downloadQrButton, copyLinkButton, qrCodeElement, message;
+let downloadQrButton, copyLinkButton, qrCodeElement, message, title, tabtitle;
 
 window.onload = () => {
     let urlParts = window.location.href.split('/');
@@ -10,7 +10,17 @@ window.onload = () => {
     copyLinkButton = document.getElementById("copy-link-button");
     qrCodeElement = document.getElementById('qr-code');
     message = document.getElementById('message');
+    title = document.getElementsByTagName('h1')[0];
+    tabtitle = document.getElementsByTagName('title')[0];
     
+    fetch('/data/' + urlParts[urlParts.length - 1]).then((response) => {
+        if (response.status == 200) {
+            response.json().then(data => {title.innerHTML = tabtitle.innerHTML = data.title});
+        } else {
+            title.innerHTML = tabtitle.innerHTML = "Could not fetch title for this page.";
+        }
+    });
+
     new QRious({
         element: qrCodeElement,
         value: url,

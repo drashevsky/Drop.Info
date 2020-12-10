@@ -103,6 +103,11 @@ public class Profile {
 		return new Profile(profileData);
 	}
 
+	public static String readProfileJSONString(String profile) throws Exception {
+		Path p = Paths.get("profiles/").resolve("Profile" + profile.toLowerCase() + ".json");
+		return readFileAsString(p.toString());
+	}
+	
 	public static String readFileAsString(String fileName) throws Exception {
 		String data = "";
 		data = new String(Files.readAllBytes(Paths.get(fileName)));

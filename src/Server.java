@@ -51,6 +51,23 @@ public class Server {
         	}
         });
         
+        server.createContext("/data/", (HttpExchange t) -> {
+        	try {
+        		String[] path = t.getRequestURI().getPath().split("/");
+            	String lastPart = (path.length > 0) ? path[path.length - 1] : "";
+            	
+        		if (Profile.exists(lastPart) && !t.getRequestURI().toString().contains("//")) {
+            		send(t, "application/json", Profile.readProfileJSONString(lastPart));
+        		} else {
+            		sendError(t, 404, "Error: page not found.");
+            	}
+        		
+        	} catch (Exception e) {
+        		System.out.println(e);
+        		sendError(t, 500, "Error: server error.");
+        	}
+        });
+        
         server.createContext("/static/", (HttpExchange t) -> {
         	try {
         		String path = t.getRequestURI().getPath();
@@ -144,10 +161,6 @@ public class Server {
         		System.out.println(e);
         		sendError(t, 500, "Error: server error.");
         	}
-        });
-        
-        server.createContext("/data/", (HttpExchange t) -> {
-        	send(t, "application/json", "");
         });
         
         server.setExecutor(null);
