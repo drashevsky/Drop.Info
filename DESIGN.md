@@ -17,4 +17,4 @@ For our build system, we chose to write custom shell scripts for Windows and Lin
 ### API Table
 ![Drop.Info API](https://github.com/drashevsky/Drop.Info/raw/main/api_table.jpg)
 
-These are our API endpoints. We chose this simple, streamlined format with the API call's name coming first, such as /static/ and /data/[card-identifier], due to the easy of implementation. Due to our use of the basic HTTPServer class in Java provided by Sun, we could not afford a lot of time spent figuring out routing. Therefore, we went with this simplified design, serving all data through simple endpoints and leaving the client to do the hard work of rendering it.
+These are our API endpoints. We chose this simple, streamlined format with the API call's name coming first, for example /static/ and /data/[card-identifier]. This was due to the ease of implementation. Due to our use of the basic HTTPServer class in Java provided by Sun, we could not afford a lot of time spent figuring out routing. Therefore, we went with this simplified design, serving all data through simple endpoints and leaving the client to do the hard work of rendering it.
