@@ -39,7 +39,7 @@ a {
     margin-left: 10px;
 }
 
-@media (min-width: 500px), (max-height: 500px) {
+@media (min-width: 500px) {
     #header #footer {
         min-height: 85px;
     }
@@ -164,5 +164,11 @@ a {
 @media (max-height: 700px) {
     #content-input, #content-input-preview {
         height: 10vh !important;
+    }
+}
+
+@media (max-height: 500px) {
+    #header #footer {
+        min-height: 85px;
     }
 }
