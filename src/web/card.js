@@ -36,7 +36,7 @@ function render(json) {
     let constrained = json.isTextConstrained == 'true';
 
     title.innerHTML = tabtitle.innerHTML = json.title;
-    content.innerHTML = new showdown.Converter().makeHtml('' + json.content);
+    content.innerHTML = new showdown.Converter({strikethrough: true}).makeHtml('' + json.content);
     content.className = (constrained) ? 'constrain' : 'unconstrain';
 
     if (json.imageId) {

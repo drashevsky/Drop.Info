@@ -26,6 +26,7 @@ a {
     margin-left: 25%;
     margin-right: 25%;
     word-wrap: break-word;
+    visibility: hidden;
 }
 
 #card-content-text > h1, h2, h3 {
@@ -60,5 +61,14 @@ a {
     #card-content-text {
         margin-left: 10%;
         margin-right: 10%;
+    }
+
+    img {
+        width: 100% !important;
+    }
+
+    iframe {
+        width: 100% !important;
+        height: 56.25% !important;
     }
 }

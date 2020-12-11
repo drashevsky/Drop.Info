@@ -5,7 +5,8 @@
 window.onload = () => {
     let text = document.getElementById('card-content-text').innerHTML,
         target = document.getElementById('card-content-text'),
-        converter = new showdown.Converter(),
+        converter = new showdown.Converter({strikethrough: true}),
         html = converter.makeHtml(text);  
     target.innerHTML = html;
+    target.style.visibility = 'visible';
 }
