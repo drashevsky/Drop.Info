@@ -171,4 +171,8 @@ a {
     #header #footer {
         min-height: 85px;
     }
+
+    #form {
+        min-height: 620px;
+    }
 }
