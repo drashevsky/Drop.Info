@@ -1,5 +1,6 @@
 ![Screenshot of Drop.Info](http://drop-info.live/img/imagexkxaru4y.jpeg)
 # Drop.Info
+_By Kavi Gill, Daniel Rashevsky, and Joel Renish_
 UW CSE 143 Project: Drop.Info is a website that allows users to quickly create index-card-sized posts of information about anything and share them with a short link. It is available for live preview at [http://drop-info.live/](http://drop-info.live/). A video demonstrating its use is located [here](https://youtu.be/3DnexE53rLw).
 
 ## Installation
