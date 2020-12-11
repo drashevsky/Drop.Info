@@ -9,8 +9,8 @@ window.onload = () => {
     contentWrapper = document.getElementById('card-content');
     share = document.getElementById('share-link');
 
-    title.innerHTML = tabtitle.innerHTML = '';
-    
+    title.innerHTML = '';
+
     let urlParts = window.location.href.split('/');
     let profileId = urlParts[urlParts.length - 1];
 

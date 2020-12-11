@@ -13,7 +13,7 @@ window.onload = () => {
     title = document.getElementsByTagName('h1')[0];
     tabtitle = document.getElementsByTagName('title')[0];
     
-    title.innerHTML = tabtitle.innerHTML = '';
+    title.innerHTML = '';
 
     fetch('/data/' + urlParts[urlParts.length - 1]).then((response) => {
         if (response.status == 200) {
