@@ -137,3 +137,30 @@ a {
     width: 100%; 
     display: block;
 }
+
+@media (pointer:none), (pointer:coarse) {
+    #content-input, #content-input-preview {
+        height: 15vh;
+    }
+    
+    form {
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+    
+    h2 {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+    
+    #error {
+        margin-top: 0;
+        margin-bottom: 5px;
+    }
+}
+
+@media (max-height: 700px) {
+    #content-input, #content-input-preview {
+        height: 10vh !important;
+    }
+}

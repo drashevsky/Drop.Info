@@ -13,6 +13,8 @@ window.onload = () => {
     title = document.getElementsByTagName('h1')[0];
     tabtitle = document.getElementsByTagName('title')[0];
     
+    title.innerHTML = tabtitle.innerHTML = '';
+
     fetch('/data/' + urlParts[urlParts.length - 1]).then((response) => {
         if (response.status == 200) {
             response.json().then(data => {title.innerHTML = tabtitle.innerHTML = data.title});

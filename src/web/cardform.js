@@ -15,6 +15,8 @@ window.onload = () => {
     preview = document.getElementById('content-input-preview');
     submitButton = document.getElementById('submit-input');
     
+    postError('');
+    
     constrainInput.addEventListener('change', changeMaxLength);
     fileInput.addEventListener('change', (event) => {
         changeMaxLength(event);
