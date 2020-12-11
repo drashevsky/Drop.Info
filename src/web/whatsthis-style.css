@@ -54,6 +54,8 @@ a {
     text-decoration: none;
 }
 
+/* Mobile styling */
+
 @media (pointer:none), (pointer:coarse) {
     #card-content-text {
         margin-left: 10%;

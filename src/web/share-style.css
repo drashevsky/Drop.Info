@@ -62,6 +62,8 @@ button {
     width: 300px; 
 }
 
+/* Mobile styling */
+
 @media (pointer:none), (pointer:coarse) {
     h1 {
         text-overflow: ellipsis;

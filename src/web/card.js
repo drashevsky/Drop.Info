@@ -1,6 +1,12 @@
+// Kavi Gill, Daniel Rashevsky, Joel Renish
+// CSE 143 Final Project
+// Renders a specific card
+
 let image, imageWrapper, title, tabtitle, content, contentWrapper, share;
 
 window.onload = () => {
+
+    //Get DOM elements
     image = document.getElementById('card-image-content');
     imageWrapper = document.getElementById('card-image');
     title = document.getElementById('card-header-title');
@@ -11,9 +17,11 @@ window.onload = () => {
 
     title.innerHTML = '';
 
+    //Get card id
     let urlParts = window.location.href.split('/');
     let profileId = urlParts[urlParts.length - 1];
 
+    //Fetch and render card data
     fetch('/data/' + profileId).then((response) => {
         if (response.status == 200) {
             response.json().then(data => render(data));
@@ -23,6 +31,7 @@ window.onload = () => {
     });
 }
 
+//Render card data and display on page
 function render(json) {
     let constrained = json.isTextConstrained == 'true';
 

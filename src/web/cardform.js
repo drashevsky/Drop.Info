@@ -1,9 +1,15 @@
+// Kavi Gill, Daniel Rashevsky, Joel Renish
+// CSE 143 Final Project
+// Drives Card Creation page, provides a form to create new cards with
+
 const maxlengths = [900, 1500, 1600, 2800];
+
 var constrainInput, fileInput, titleInput, contentInput, deleteButton, previewButton,
     previewButtonVisible, previewButtonHidden, preview, submitButton;
 
-
 window.onload = () => {
+
+    //Get all DOM elements
     constrainInput = document.getElementById('constain-text-setting-input');
     fileInput = document.getElementById('file-input');
     titleInput = document.getElementById('title-input');
@@ -17,18 +23,23 @@ window.onload = () => {
     
     postError('');
     
+    //Change max length of content textbox based on constrain toggle
     constrainInput.addEventListener('change', changeMaxLength);
+
+    //Show delete button if image was added to card
     fileInput.addEventListener('change', (event) => {
         changeMaxLength(event);
         deleteButton.style.display = (fileInput.value) ? 'inline-block' : 'none';
     });
     
+    //Delete image if delete button pressed
     deleteButton.style.display = (fileInput.value) ? 'inline-block' : 'none';
     deleteButton.addEventListener('click', (event) => {
         fileInput.value = "";
         fileInput.dispatchEvent(new Event('change'));
     });
 
+    //Preview button: show markdown preview of content
     previewButton.addEventListener('click', (event) => {
         if (previewButtonHidden.style.display != 'block') { 
             preview.innerHTML = new showdown.Converter().makeHtml(contentInput.value);
@@ -47,7 +58,7 @@ window.onload = () => {
     submitButton.addEventListener('click', sendFormData);
 }
 
-
+//Controls max length of content based on image and constrain toggle state
 function maxLengthSwitcher(hasImage, hasConstraint) {
     if (hasImage && hasConstraint) {
         return maxlengths[0];
@@ -60,6 +71,7 @@ function maxLengthSwitcher(hasImage, hasConstraint) {
     }
 }
 
+//Change max length of content textbox and chop off extra text
 function changeMaxLength(event) {
     contentInput.maxLength = maxLengthSwitcher(fileInput.value, constrainInput.checked);
     if (contentInput.value.length > contentInput.maxLength) {
@@ -67,6 +79,7 @@ function changeMaxLength(event) {
     }
 }
 
+//Send completed form to API if it is valid
 async function sendFormData() {
     if (!titleInput.value || !contentInput.value) {
         return;
@@ -93,6 +106,7 @@ async function sendFormData() {
     xhr.send(JSON.stringify(data));
 }
 
+//Converts user-selected image to base64 data url
 function toDataURL(file) {
     return new Promise((resolve, reject) => {
         let reader = new FileReader();
@@ -103,6 +117,7 @@ function toDataURL(file) {
     });
 }
 
+//Render error message
 function postError(message) {
     document.getElementById('error').innerHTML = message;
 }

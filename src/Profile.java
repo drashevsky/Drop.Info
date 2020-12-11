@@ -1,3 +1,7 @@
+// Kavi Gill, Daniel Rashevsky, Joel Renish
+// CSE 143 Final Project
+// Handles storage of images and post (known as cards) on the disk.
+
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.LinkedHashMap;
@@ -15,52 +19,60 @@ import java.nio.file.*;
 import java.util.Random;
 
 public class Profile {
+	
 	private static final int ID_LENGTH = 8;
 
-	private String profileId; // Unique identifier for individual profile
+	private String profileId; 				// Unique identifier for individual card
 	private String title;
-	private String content;
+	private String content;					// Markdown content of individual card
 	private String imageId;
-	private String isTextConstrained;
-	private static Random rand = new Random();
+	private String isTextConstrained;		// Special formatting setting for display of card
+	private static Random rand;
 
-	// Takes data in JSON format and parses it into object
+	
+	
+	// Takes data in JSON format and constructs it into Profile object. 
+	// Throws exception if can't read or parse data.
 	public Profile(String json) throws FileNotFoundException, IOException, ParseException {
 		Object obj = new JSONParser().parse(new StringReader(json));
 		JSONObject jo = (JSONObject) obj;
+		
 		this.title = (String) jo.get("title");
 		this.content = (String) jo.get("content");
 		this.imageId = (String) jo.get("imageId");
 		this.profileId = (String) jo.get("profileId");
 		this.isTextConstrained = (String) jo.get("isTextConstrained");
+		this.rand = new Random();
+		
 	}
 
-	// General constructor
+	// Takes in String data about title, content, image name, and a text constrained
+	// display setting and constructs it into a Profile object.
 	public Profile(String title, String content, String imageId, String isTextConstrained) {
 		this.title = title;
 		this.content = content;
 		this.imageId = imageId;
 		this.isTextConstrained = isTextConstrained;
+		this.rand = new Random();
 		this.profileId = generateRandomId();
 	}
 
+	//Generates a random alphanumeric id of ID_LENGTH length,
+	//which it returns as a String.
 	private static String generateRandomId() {
-		String acc = "";
+		String id = "";
 
 		for (int i = 0; i < ID_LENGTH; i++) {
 			int num = rand.nextInt(36);
-			char ch;
 
 			if (num <= 25) {
-				ch = (char) ('a' + num);
+				id += (char) ('a' + num);
 			} else {
-				ch = (char) ('0' + (num - 26));
+				id += (char) ('0' + (num - 26));
 			}
-
-			acc += ch;
 		}
 
-		return acc;
+		return id;
 	}
 	
 	
@@ -87,48 +99,54 @@ public class Profile {
 	
 	
 	
+	//Given a alphanumeric String profile id, parses and returns a Profile object from 
+	//its corresponding JSON flatfile on disk. Throws an exception if the disk 
+	//or parse operation failed.
 	public static Profile loadProfile(String profileId) throws Exception {
 		return loadProfileFromJSON("Profile" + profileId.toLowerCase() + ".json");
 	}
 
-	// This is for loading file from JSON (wrapper)
+	//Given a String filename for a JSON flatfile, parses and returns its Profile object.
+	//Throws an exception if the disk or parse operation failed.
 	public static Profile loadProfileFromJSON(String fileName) throws Exception {
 		return loadProfileFromJSON(fileName, "profiles/");
 	}
 
-	// loading file
+	//Given a String filename and path for a JSON flatfile, parses and returns its Profile object.
+	//Throws an exception if the disk or parse operation failed.
 	public static Profile loadProfileFromJSON(String fileName, String path) throws Exception {
-		Path p = Paths.get(path);
-
-		String profileData = readFileAsString(p.resolve(fileName).toString());
+		String profileData = readFileAsString(Paths.get(path).resolve(fileName).toString());
 		return new Profile(profileData);
 	}
 
-	public static String readProfileJSONString(String profile) throws Exception {
-		Path p = Paths.get("profiles/").resolve("Profile" + profile.toLowerCase() + ".json");
+	//Given a alphanumeric String profile id, returns a String containing its JSON data from 
+	//a corresponding flatfile on disk. Throws an exception if the disk operation failed.
+	public static String readProfileJSONString(String profileId) throws Exception {
+		Path p = Paths.get("profiles/").resolve("Profile" + profileId.toLowerCase() + ".json");
 		return readFileAsString(p.toString());
 	}
 	
-	public static String readFileAsString(String fileName) throws Exception {
-		String data = "";
-		data = new String(Files.readAllBytes(Paths.get(fileName)));
-		return data;
+	//Given a String filepath, returns a String containing its contents on disk. 
+	//Throws an exception if the disk operation failed.
+	public static String readFileAsString(String filePath) throws Exception {
+		return new String(Files.readAllBytes(Paths.get(filePath)));
 	}
 	
+	//Given a alphanumeric String profile id, checks if the corresponding Profile exists on disk
+	//and returns a boolean. Throws an exception if the disk operation failed.
 	public static boolean exists(String profileId) throws Exception {
 		Path p = Paths.get("profiles/").resolve("Profile" + profileId.toLowerCase() + ".json");
 		return Files.exists(Paths.get(p.toString()));
 	}
 
-
-	
-	
-	// This is for saving file to JSON (wrapper)
+	//Saves this profile to a JSON flatfile on disk. Throws an exception if the
+	//disk operation fails. Returns a reference to the saved Profile.
 	public Profile saveProfileToJSON() throws FileNotFoundException {
 		return saveProfileToJSON("Profile" + profileId + ".json", "profiles/");
 	}
 
-	// Saving file to JSON (wrapper)
+	//Saves this profile to a JSON flatfile on disk, given a String filename and path to save to. 
+	//Throws an exception if the disk operation fails. Returns a reference to the saved Profile.
 	public Profile saveProfileToJSON(String fileName, String path) throws FileNotFoundException {
 		JSONObject jo = new JSONObject();
 
@@ -151,7 +169,9 @@ public class Profile {
 
 	
 	
-	// saves/stores image
+	//Saves an image to disk under this profile's name given a byte array of the image data 
+	//and a format to save in. If no format is given, saves as PNG. Throws an exception if the
+	//image conversion or disk operation fails.
 	public void saveImage(byte[] imageData, String format) throws IOException {
 		if (format == null) {
 			format = "png";
@@ -160,24 +180,27 @@ public class Profile {
 		saveImage(imageData, format, "image" + profileId + "." + format, "images/");
 	}
 
+	//Saves an image to disk under this profile's name given a byte array of the image data,
+	//a format to save in, and a String filename and path. Sets the filename to this Profile's
+	//imageId. Throws an exception if the image conversion or disk operation fails.
 	public void saveImage(byte[] imageData, String format, String fileName, String path) throws IOException {
 		InputStream is = new ByteArrayInputStream(imageData);
 		BufferedImage newBi = ImageIO.read(is);
-
+		
 		Path p = Paths.get(path);
-
 		ImageIO.write(newBi, format, p.resolve(fileName).toFile());
-
+		
 		this.imageId = fileName;
 	}
 
-	
-	
-	// Retrieving image
+	//Retrieves this Profile's corresponding image, which is returned as a byte array. Throws an
+	//exception of the disk or image processing operation fails.
 	public byte[] loadImage() throws IOException {
 		return loadImage(imageId, "images/");
 	}
 
+	//Retrieves this Profile's corresponding image, given a String filename and path. The image is 
+	//returned as a byte array. Throws an exception of the disk or image processing operation fails.
 	public static byte[] loadImage(String fileName, String path) throws IOException {
 		Path p = Paths.get(path);
 		p = p.resolve(fileName);
@@ -192,18 +215,25 @@ public class Profile {
 
 	
 	
+	//Returns a String representation of this Profile.
 	@Override
 	public String toString() {
-		return "Profile [profileId=" + profileId + ", title=" + title + ", content=" + content + ", imageId=" + imageId
-				+ ", isTextConstrained=" + isTextConstrained + "]";
+		return "Profile [profileId=" + profileId 
+					+ ", title=" + title 
+					+ ", content=" + content 
+					+ ", imageId=" + imageId 
+					+ ", isTextConstrained=" + isTextConstrained + "]";
 	}
 
+	//Runs a series of tests to ensure the Profile class works. 
+	//Throws an exception if any tests fail.
 	public static void main(String[] args) throws Exception {
 		rand = new Random(100);
-		Profile p = new Profile(
-				"{\n" + "  \"title\": \"my First Card\",\n" + "  \"content\": \"data that goes on a card\",\n"
-						+ "  \"imageId\": \"logo.png\"\n" + "  \"isTextConstrained\": \"true\",\n"
-						+ "  \"profileId\": \"100\"\n" + "}");
+		Profile p = new Profile("{\n" + "  \"title\": \"my First Card\",\n" + 
+										"  \"content\": \"data that goes on a card\",\n" + 
+										"  \"imageId\": \"logo.png\"\n" + 
+										"  \"isTextConstrained\": \"true\",\n" + 
+										"  \"profileId\": \"100\"\n" + "}");
 		System.out.println(p);
 		p.saveProfileToJSON();
 

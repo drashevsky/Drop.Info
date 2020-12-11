@@ -84,6 +84,8 @@ a {
     display: none !important;
 }
 
+/* Mobile styling */
+
 @media (pointer:none), (pointer:coarse) {
     #card-header-title {
         text-overflow: ellipsis;

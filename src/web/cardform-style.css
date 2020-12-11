@@ -138,6 +138,8 @@ a {
     display: block;
 }
 
+/* Mobile styling */
+
 @media (pointer:none), (pointer:coarse) {
     #content-input, #content-input-preview {
         height: 15vh;

@@ -1,3 +1,7 @@
+// Kavi Gill, Daniel Rashevsky, Joel Renish
+// CSE 143 Final Project
+// Server that hosts Drop.Info webapp and API.
+
 import java.util.*;
 import java.io.*;
 import java.net.*;
@@ -23,15 +27,22 @@ public class Server {
 
         HttpServer server = HttpServer.create(new InetSocketAddress(PORT), NUMCONNECTIONS);
         
+        //API endpoint which returns either the HTML card creation form or page for a 
+        //specific card, given the request URI is valid. Replies with error pages for
+        //a server failure, or if the URI is invalid or doesn't exist.
         server.createContext("/", (HttpExchange t) -> {
         	try {
+        		
+        		//Get the last part of the URI -> drop.info/(lastPart)
         		String[] path = t.getRequestURI().getPath().split("/");
             	String lastPart = (path.length > 0) ? path[path.length - 1] : "";
             	
+            	//Return page of specific card
         		if (Profile.exists(lastPart) && !t.getRequestURI().toString().contains("//")) {
             		String html = Files.readString(Paths.get("views/card.html"));
             		send(t, "text/html; charset=utf-8", html);
             	
+            	//Return card creation form
         		} else if (lastPart.length() == 0 && !t.getRequestURI().toString().contains("//")) {
             		String html = Files.readString(Paths.get("views/cardform.html"));
             		send(t, "text/html; charset=utf-8", html);
@@ -46,11 +57,18 @@ public class Server {
         	}
         });
         
+        //API endpoint which accepts a post request containing JSON with a new card, before parsing
+        //and saving the card. A valid JSON request body consists of a title string between 0 - 100 
+        //characters, a content string with variable length depending on the other items, a base64 
+        //image dataurl, and a string containing a text display setting boolean. Replies with error 
+        //messages if the request or URI is invalid, or if there was a server failure.
         server.createContext("/create", (HttpExchange t) -> {
         	try {
         		
+        		//Verify URI
         		if (t.getRequestURI().getPath().equals("/create") && !t.getRequestURI().toString().contains("//")) {
         			
+        			//Parse JSON
         			String json = receiveBody(t.getRequestBody(), StandardCharsets.UTF_8);
         			JSONObject jo = (JSONObject) new JSONParser().parse(new StringReader(json));
         			
@@ -59,6 +77,7 @@ public class Server {
         			String imageData = (String) jo.get("image");
         			boolean isTextConstrained = (boolean) jo.get("isTextConstrained");
         			
+        			//Decode image from data URL
         			String data = "", fileType = "";
         			byte[] image = new byte[0];
         			
@@ -67,12 +86,14 @@ public class Server {
         				fileType = imageData.substring(imageData.indexOf("/") + 1, imageData.indexOf(";"));
         				image = Base64.getDecoder().decode(data);
         				
+        				//Verify if filetype is supported
         				if (!(fileType.equals("jpeg") || fileType.equals("png") || fileType.equals("gif"))) {
             				sendData(t, 400, "Error: unsupported image filetype.");
             				return;
         				}
         			}
         			
+        			//Verify title and content
         			if (title.length() > 100 || title.length() <= 0) {
         				sendData(t, 400, "Error: no title or title too long.");
         			} else if (content.length() <= 0) {
@@ -85,6 +106,8 @@ public class Server {
         				sendData(t, 400, "Error: content too long.");
         			} else if (!isTextConstrained && !(data.length() > 0) && content.length() > CONTENTLENGTHS[3]) {
         				sendData(t, 400, "Error: content too long.");
+        			
+        			//Save new card
         			} else {
         				title = StringEscapeUtils.escapeHtml4(title);
         				content = StringEscapeUtils.escapeHtml4(content);
@@ -108,11 +131,16 @@ public class Server {
         	}
         });
         
+        //API endpoint which returns JSON data given a string card id (profileId), if the request URI is valid. 
+        //Replies with error pages for a server failure, or if the card URI is invalid or doesn't exist.
         server.createContext("/data/", (HttpExchange t) -> {
         	try {
+        		
+        		//Get the last part of the URI -> drop.info/(profileId)
         		String[] path = t.getRequestURI().getPath().split("/");
             	String lastPart = (path.length > 0) ? path[path.length - 1] : "";
             	
+            	//Verify if card exists and send JSON response
         		if (Profile.exists(lastPart) && !t.getRequestURI().toString().contains("//")) {
             		send(t, "application/json", Profile.readProfileJSONString(lastPart));
         		} else {
@@ -125,12 +153,17 @@ public class Server {
         	}
         });
         
+        //API endpoint which returns a static css or js file, if the request URI is valid. Replies 
+        //with error pages for a server failure, or if the request URI is invalid or doesn't exist.
         server.createContext("/static/", (HttpExchange t) -> {
         	try {
+        		
+        		//Get file URI
         		String path = t.getRequestURI().getPath();
         		String[] splitPath = path.split("\\.");
         		String contentType = (splitPath.length > 0) ? splitPath[splitPath.length - 1].toLowerCase() : "";
         		
+        		//Check content type and send file
         		if (contentType.equals("css")) {
         			send(t, "text/css", Files.readString(Paths.get("." + path)));
         		} else if (contentType.equals("js")) {
@@ -153,11 +186,17 @@ public class Server {
         	}
         });
         
+        //API endpoint which returns a HTML page allowing a certain card to be shared, if the 
+        //request URI is valid. Replies with error pages for a server failure, or if the card 
+        //URI is invalid or doesn't exist.
         server.createContext("/share/", (HttpExchange t) -> {
         	try {
+        		
+        		//Get the last part of the URI -> drop.info/(profileId)
         		String[] path = t.getRequestURI().getPath().split("/");
             	String lastPart = (path.length > 0) ? path[path.length - 1] : "";
             	
+            	//Verify URI and send share page
         		if (Profile.exists(lastPart) && !t.getRequestURI().toString().contains("//")) {
             		String html = Files.readString(Paths.get("views/share.html"));
             		send(t, "text/html; charset=utf-8", html);
@@ -172,15 +211,22 @@ public class Server {
         	}
         });
         
+        //API endpoint which returns an image file in a supported format, if the request URI is
+        //valid. Replies with error pages for a server failure, or if the request URI 
+        //is invalid or doesn't exist.
         server.createContext("/img/", (HttpExchange t) -> {
         	try {
+        		
+        		//Get image URI
         		String[] path = t.getRequestURI().getPath().split("/");
             	String lastPart = (path.length > 0) ? path[path.length - 1] : "";
             	byte[] imageData = Profile.loadImage(lastPart, "images/");
             	
+            	//Get image filetype
             	String[] splitName = lastPart.split("\\.");
         		String contentType = (splitName.length > 0) ? splitName[splitName.length - 1].toLowerCase() : "";
         		
+        		//Verify content type and send image
         		if (contentType.equals("png")) {
         			sendImage(t, "image/png", imageData);
         		} else if (contentType.equals("jpg") || contentType.equals("jpeg")) {
@@ -205,9 +251,12 @@ public class Server {
         	}
         });
        
+        //API endpoint which returns a page explaining what Drop.Info is, if the request URI is
+        //valid. Replies with error pages for a server failure, or if the request URI is invalid.
         server.createContext("/what", (HttpExchange t) -> {
         	try {
         		
+        		//Verify URI and send page
         		if (t.getRequestURI().getPath().equals("/what") && !t.getRequestURI().toString().contains("//")) {
         			send(t, "text/html; charset=utf-8", Files.readString(Paths.get("views/whatsthis.html")));
         		} else {
@@ -224,6 +273,8 @@ public class Server {
         server.start();
     }
 
+    //Sends HTTP data with 200 status, given an HttpExchange to respond to, as well as the
+    //text and content type of the data. Throws exceptions if encoding or transmission fails.
     private static void send(HttpExchange t, String contentType, String data) 
     		throws IOException, UnsupportedEncodingException {
         
@@ -236,6 +287,9 @@ public class Server {
         }
     }
     
+    //Formats and sends an HTML error page, given an HttpExchange to respond to, as well as the
+    //error message String to transmit and integer error status code. Throws exceptions if encoding 
+    //or transmission fails.
     private static void sendError(HttpExchange t, int errorCode, String message) 
     		throws IOException, UnsupportedEncodingException, FileNotFoundException {
     	
@@ -250,6 +304,8 @@ public class Server {
         }
     }
     
+    //Sends a plain text HTTP message, given an HttpExchange to respond to, as well as the
+    //integer HTTP status and message String. Throws exceptions if encoding or transmission fails.
     private static void sendData(HttpExchange t, int code, String message) 
     		throws IOException, UnsupportedEncodingException, FileNotFoundException {
         t.getResponseHeaders().set("Content-Type", "text/plain; charset=utf-8");
@@ -260,6 +316,8 @@ public class Server {
         }
     }
     
+    //Sends an image over HTTP with a 200 status, given an HttpExchange to respond to, as well as 
+    //the image byte array and content type. Throws exceptions if encoding or transmission fails.
     private static void sendImage(HttpExchange t, String contentType, byte[] imageData) 
     		throws IOException, UnsupportedEncodingException {
         
@@ -271,6 +329,9 @@ public class Server {
         }
     }
 
+    //Receives, decodes, and returns a request body String from an HttpExchange, given the
+    //request body's InputStream and the charset to decode to. Throws an exception if the
+    //decoding fails.
     private static String receiveBody(InputStream body, Charset charset) throws IOException {
     	StringWriter writer = new StringWriter();
     	IOUtils.copy(body, writer, charset);
