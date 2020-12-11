@@ -12,7 +12,7 @@ Mockups of our user interface are available at this link: [https://github.com/dr
 Drop.Info consists of a front-end which loads content and handles content submission, written in HTML/CSS/Javascript. This was chosen for the fastest possible development time, with the best possible UI. The backend stores and retrieves content, handling all API requests. It was written in Java, due to all of us being familiar with the language. Due to faster development time, we store user data in flat JSON files, rather than a dedicated database.
 
 ### Build system and dependencies
-For our build system, we chose to write custom shell scripts for Windows and Linux. This was due to the low learning curve and maximum customization this provided. We did not have to learn and setup other build systems, which would have taken time. Simple scripts to run `javac`, copy dependencies, link everything to `CLASSPATH`, and run the final product worked best for us. The build sysetm also worked very well cross-platform, allowing us to run it off of AWS EC2.
+For our build system, we chose to write custom shell scripts for Windows and Linux. This was due to the low learning curve and maximum customization this provided. We did not have to learn and setup other build systems, which would have taken time. Simple scripts to run `javac`, copy dependencies, link everything to `CLASSPATH`, and run the final product worked best for us. The build system also worked very well cross-platform, allowing us to run it off of AWS EC2.
 
 ### API Table
 ![Drop.Info API](https://github.com/drashevsky/Drop.Info/raw/main/api_table.jpg)
