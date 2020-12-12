@@ -27,7 +27,9 @@ hs_err_pid*
 build/*.jar
 build/runserver.bat
 build/runserver.sh
+build/runserver-instance.sh
 build/static/
 build/views/
 build/profiles/
 build/images/image*
+build/nohup.out
