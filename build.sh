@@ -29,9 +29,11 @@ fi
 # Copy dependencies
 cp deps/*.jar build/
 
-# Copy run script
+# Copy run scripts
 cp runscripts/runserver.sh build
 sudo chmod +x build/runserver.sh
+cp runscripts/runserver-instance.sh build
+sudo chmod +x build/runserver-instance.sh
 
 # Copy web code
 cp src/web/*.css build/static
