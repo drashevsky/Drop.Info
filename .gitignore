@@ -24,12 +24,7 @@ hs_err_pid*
 /target/
 
 # Build files
-build/*.jar
-build/runserver.bat
-build/runserver.sh
-build/runserver-instance.sh
-build/static/
-build/views/
-build/profiles/
-build/images/image*
-build/nohup.out
+build/*
+
+#Allow hosted image
+!build/images/error.jpg
