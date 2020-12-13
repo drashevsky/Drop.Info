@@ -26,7 +26,7 @@ a {
     margin-left: 25%;
     margin-right: 25%;
     word-wrap: break-word;
-    visibility: hidden;
+    /* visibility: hidden; */
 }
 
 #card-content-text > h1, h2, h3 {
