@@ -2,6 +2,15 @@
 // CSE 143 Final Project
 // Renders a specific card
 
+const markdownSettings = {
+    simplifiedAutoLink: true,
+    tables: true,
+    tasklists: true,
+    emoji: true,
+    strikethrough: true, 
+    simpleLineBreaks: true 
+}
+
 let image, imageWrapper, title, tabtitle, content, contentWrapper, share;
 
 window.onload = () => {
@@ -36,7 +45,7 @@ function render(json) {
     let constrained = json.isTextConstrained == 'true';
 
     title.innerHTML = tabtitle.innerHTML = json.title;
-    content.innerHTML = new showdown.Converter({strikethrough: true}).makeHtml('' + json.content);
+    content.innerHTML = new showdown.Converter(markdownSettings).makeHtml('' + json.content);
     content.className = (constrained) ? 'constrain' : 'unconstrain';
 
     if (json.imageId) {

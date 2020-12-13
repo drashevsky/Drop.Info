@@ -2,6 +2,14 @@
 // CSE 143 Final Project
 // Drives Card Creation page, provides a form to create new cards with
 
+const markdownSettings = {
+    simplifiedAutoLink: true,
+    tables: true,
+    tasklists: true,
+    emoji: true,
+    strikethrough: true, 
+    simpleLineBreaks: true 
+}
 const maxlengths = [900, 1500, 1600, 2800];
 
 var constrainInput, fileInput, titleInput, contentInput, deleteButton, previewButton,
@@ -42,7 +50,7 @@ window.onload = () => {
     //Preview button: show markdown preview of content
     previewButton.addEventListener('click', (event) => {
         if (previewButtonHidden.style.display != 'block') { 
-            preview.innerHTML = new showdown.Converter().makeHtml(contentInput.value);
+            preview.innerHTML = new showdown.Converter(markdownSettings).makeHtml(contentInput.value);
             previewButtonVisible.style.display = 'none';
             previewButtonHidden.style.display = 'block';
             contentInput.style.display = 'none';
